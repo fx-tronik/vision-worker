@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 '''
- _______  __   __  _______ 
+ _______  __   __  _______
 |       ||  | |  ||       |
 |  _____||  |_|  ||  _____|
-| |_____ |       || |_____ 
+| |_____ |       || |_____
 |_____  ||       ||_____  |
  _____| | |     |  _____| |
 |_______|  |___|  |_______|
@@ -17,7 +17,7 @@ from common.daemon import Daemon
 from common.logger import Log
 from common.clients import ClientMosquitto
 from common.exceptions import ReconnectFailure
-
+#test
 class Base(Daemon):
     transport_clients = {'Mosquitto': ClientMosquitto}
 
@@ -33,9 +33,9 @@ class Base(Daemon):
 
         if not logger_name:
             logger_name = LOGGER['default_name']
-            
+
         self.subscribers = {}
-            
+
         log_path = LOGGER['save_path'].format(pid_file_name)
         self.log = Log(logger_name,
                LOGGER['level'],
@@ -43,9 +43,9 @@ class Base(Daemon):
                log_path,
                LOGGER['file_size_mb'],
                LOGGER['amount_backup_files'])
-        
+
         self.message_bus = self.init_client(message_bus, **kwargs)
-        
+
     def initial(self, arguments=None, after_exit=True):
         self.log.info('Daemon initial')
 
@@ -81,8 +81,8 @@ class Base(Daemon):
         else:
             self.log.warning('Daemon command not found (Usage: start|stop|restart)')
             print('Usage: %s start|stop|restart' % arguments[0])
-            sys.exit(2)   
-            
+            sys.exit(2)
+
     def notify(self, name, *args, **kwargs):
         try:
             if name in self.subscribers:
@@ -105,7 +105,7 @@ class Base(Daemon):
         self.subscribers[name].append(callback)
         self.log.debug('Subscriber "%s" success added with callback "%s"' %
                        (name, callback.__name__))
-        
+
     def init_client(self, client_name, **kwargs):
         if client_name is None:
             return None
@@ -113,7 +113,7 @@ class Base(Daemon):
             return self.transport_clients[client_name](self.log, **kwargs)
         except KeyError:
             raise Exception('Client "%s" not found' % client_name)
-            
+
     def run(self):
         try:
             self.log.debug('Daemon worker started')
@@ -122,16 +122,16 @@ class Base(Daemon):
         except Exception as error:
             self.log.critical('Worker error: (%s)' % error.message)
             sys.exit(4)
-            
+
     def pid_filepath(self, filename):
         return normpath(join(PID_FILE_PATH, filename + '.txt'))
-            
+
 class BaseWorker(Base):
     def __init__(self, pid_prefix, module, **kwargs):
         Base.__init__(self,
                       pid_file_name='{}.{}'.format(pid_prefix, module),
-                      **kwargs) 
-        
+                      **kwargs)
+
 class BaseProcess(Base):
     def __init__(self, prefix, module='BaseProcess', **kwargs):
         Base.__init__(self,
@@ -150,7 +150,7 @@ class BaseProcess(Base):
 
     def initial_stop(self):
         if DEBUG and not self.is_running():
-            print('%s:%s not running' % (self.prefix, self.module_name))  
+            print('%s:%s not running' % (self.prefix, self.module_name))
             sys.exit(1)
         self.initial_stop_callback()
 
