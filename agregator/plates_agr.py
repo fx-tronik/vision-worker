@@ -16,7 +16,7 @@ class AgregatorPlates(AgregatorBase):
                  message_client, **kwargs):
         self.name = PLATES_AGR_TAG
         self.agregate_module_name = 'agregator.agregator_base.tablice'
-        self.agregate_class_name = 'Counter'
+        self.agregate_class_name = 'Counasdater'
         AgregatorBase.__init__(self, logger, config, detection_pipe_ends, 
                                message_client, **kwargs)
         
