@@ -17,5 +17,5 @@ class PlatesLocalizer(ProcessorBase):
         self.name = PLATES_PROC_TAG
         self.inference_module_name = 'processor.detector_base.plates.plates_ocr'
         self.inference_class_name = 'PlatesOCR'
-        self.weights_file = 'empty'
+        self.weights_file = ''
         ProcessorBase.__init__(self, logger, image_queues, pipe_starts,  **kwargs)

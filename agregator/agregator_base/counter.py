@@ -33,8 +33,8 @@ class Counter(AgregateProcessor):
         meta, detection = detection_with_meta
         w, h = meta['image_width'] , meta['image_height']
         streamer_id = meta['streamer_id']
-        zones_config = search_in_dict_list(self.config['cameras'], 'id', streamer_id)['zones']
-        cnts = self.zones_to_cnts(zones_config)
+        zones_config = search_in_dict_list(self.config['cameras'], 'id', streamer_id)['zone_cameras'] # Zmiana nazewnictwa
+        cnts = self.zones_to_cnts(zones_config, w, h)
         zones_with_humans = self.count(detection, cnts, w, h)
         message = None
         if self.change_in_directory(self.zones_past, zones_with_humans):
@@ -46,21 +46,30 @@ class Counter(AgregateProcessor):
         return message
 
 
-    def zones_to_cnts(self, zones_config):
+    #Zmiana w okreslaniu konturow stref, ze wzgledu na inny format danych,
+    #Rozpatrywanie tylko okreslonych stref, a nie wszystkich z danej kamery
+    def zones_to_cnts(self, zones_config, width, height):
 #        a = np.zeros((480, 640), dtype = np.uint8)
 #        test_point1 = (500, 300)
         contours = {}
         for zone in zones_config:
-            polygon = zone['polygons']
-            #ATTENTION - ONLY ONE POLYGON FOR ZONE FOR NOW
-            contour = [None] * len(polygon)
-            for i, pt in enumerate(polygon):
-                contour[i] = (pt['x'], pt['y'])
-            contour = np.expand_dims(contour, 1)
-            contours[zone['id']] = contour
-#            aa = cv2.drawContours(a, [contour], 0, (255), 3)
-#            plt.imshow(aa)
-#            print(cv2.pointPolygonTest(contour, test_point1, False))
+            if "agregator_zone" in zone:
+                  agregator_zone = zone["agregator_zone"]
+                  for _ in (agr for agr in agregator_zone if agr["agregator"] == "zones_counter"):
+                        polygon = zone['polygons']
+                        if len(polygon) >= 3:
+                              #ATTENTION - ONLY ONE POLYGON FOR ZONE FOR NOW
+                              contour = [None] * len(polygon)
+                              for i, pt in enumerate(polygon):
+                                  contour[i] = (pt['x'], pt['y'])
+                        else:
+                              contour = [(0,0), (width,0), (width,height), (0,height)]
+                        contour = np.expand_dims(contour, 1)
+                        contours[zone['id']] = contour
+                        #aa = cv2.drawContours(a, [contour], 0, (255), 3)
+                        #plt.imshow(aa)
+                        #print(cv2.pointPolygonTest(contour, test_point1, False))
+                        break
         return contours
 
     def get_contact_point(self, human):
@@ -131,4 +140,4 @@ class Counter(AgregateProcessor):
     def make_message(self, zones):
         message_dict = zones
         message_txt = json.dumps(message_dict)
-        return message_txt
+        return message_dict

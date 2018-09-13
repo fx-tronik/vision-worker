@@ -37,7 +37,7 @@ PLATES_AGR_TAG = 'ocr_agr'
 
 CONFIGURATOR = {
         #'url': 'http://127.0.0.1:5000/config',
-        'url': 'http://192.168.0.150:8080/api/camera/',
+        'url': 'http://192.168.0.125:8080/api/cameras/',
         'local_file': 'configs/config.json',
         'save_backup': True
         }

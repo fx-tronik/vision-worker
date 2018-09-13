@@ -13,7 +13,10 @@ from importlib import import_module
 from multiprocessing import Process, Value
 import traceback
 from time import sleep
+import json
 from common.settings import MESSAGE_PREFIX
+
+
 class AgregatorBase:
     def __init__(self, logger, config, detection_pipe_ends,
                  message_client, **kwargs):
@@ -26,7 +29,6 @@ class AgregatorBase:
         self.process_agregate.start()
         self.retry_timeout = 10
 
-
     def agregate_process(self, condition):
         agregate_module = import_module(self.agregate_module_name)
         agreagte_class = getattr(agregate_module, self.agregate_class_name)
@@ -38,16 +40,29 @@ class AgregatorBase:
     def agregate_detections(self, agregator):
         for pipe_end in self.detection_pipe_ends:
             detection_with_meta = pipe_end.recv()
+
+            #Prowizoryczne formatowanie danych do wyslania
             try:
+                to_send = None
                 message = agregator.process(detection_with_meta)
+                if message and type(message) is dict:
+                    message_dict = message.copy()
+                    for k, v in message_dict.items():
+                        message_dict[k] = {self.name: message_dict[k]}
+                    to_send = json.dumps(message_dict)
+
             except Exception as error:
                 self.log.critical(traceback.fotrmat_exc(error))
                 message = None
+                to_send = None
+
+            #WebSerwer przyjmuje dane w topicu "data"
             if message:
-                self.log.info('Message: {} on topic = {}/{}'.format(message,
-                              MESSAGE_PREFIX, self.name))
+                self.log.info('Message: {} on topic = {}/{}'.format(to_send,
+                              MESSAGE_PREFIX, 'data'))
+            if string:
                 self.message_client.publish(topic='{}/{}'.format(MESSAGE_PREFIX,
-                                            self.name), message=message)
+                                            'data'), message=to_send)
 
     def loop(self):
         if self.process_agregate.is_alive() is False:

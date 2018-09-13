@@ -44,12 +44,16 @@ class Processor(BaseWorker):
         processors = {}
         for camera_config in cameras_config:
             camera_id = camera_config['id']
-            for zone in camera_config['zones']:
-                zone_id = zone['id']
-                for goal in zone['goals']:
-                    processor = goal['type']
-                    processors.setdefault(processor, []).append(camera_id)
+            for zone in camera_config['zone_cameras']:
+                for goal in zone['agregator_zone']:
+                    # wybor procesora na podstawie agregatora -
+                    # czy goal['type'] jest rzeczywiscie potrzebne?
                     agregator = goal['agregator']
+                    if agregator == 'ocr_agr':
+                        processor = 'plates_localizer'
+                    if agregator == 'zones_counter':
+                        processor = 'human_pose_localizer'
+                    processors.setdefault(processor, []).append(camera_id)
                     agregators.setdefault(agregator, []).append(processor)
         pipes = {}
         for agregator_name, agr_processors in agregators.items():

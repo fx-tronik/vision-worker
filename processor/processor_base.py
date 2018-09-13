@@ -30,10 +30,11 @@ class ProcessorBase:
 
     def detect_process(self, condition):
         inference_module = import_module(self.inference_module_name)
-        print(self.name)
+
+        #Bardzo prowizoryczne rozwiazanie przydzielania do GPU odpowiednich modeli
         if self.name == 'human_pose_localizer':
-            os.environ["CUDA_VISIBLE_DEVICES"]='1'
-            print("karta 1")
+            os.environ["CUDA_VISIBLE_DEVICES"]='0'
+            print("karta 0")
         if self.name == 'plates_localizer':
             os.environ["CUDA_VISIBLE_DEVICES"]='1'
             print("karta 1")

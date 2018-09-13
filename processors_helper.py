@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 '''
- _______  __   __  _______ 
+ _______  __   __  _______
 |       ||  | |  ||       |
 |  _____||  |_|  ||  _____|
-| |_____ |       || |_____ 
+| |_____ |       || |_____
 |_____  ||       ||_____  |
  _____| | |     |  _____| |
 |_______|  |___|  |_______|
@@ -29,13 +29,12 @@ PROCESSORS = {
         'callback': PlatesLocalizer,
     },
 }
-    
+
 AGREGATORS = {
     HUMAN_COUNTER_TAG: {
-        'callback': AgregatorHumanCounter,        
+        'callback': AgregatorHumanCounter,
     },
     PLATES_AGR_TAG: {
-        'callback': AgregatorPlates,        
+        'callback': AgregatorPlates,
     },
 }
-    

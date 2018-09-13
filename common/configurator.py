@@ -91,7 +91,7 @@ class Configurator:
         error = self.check_fields(config, required_fields)
 
         camera_fields = ['id', 'formatted_url',
-                         'zones', 'name']
+                         'zone_cameras', 'name']
         for camera in config['cameras']:
             error = self.check_fields(camera, camera_fields)
 
