@@ -17,7 +17,7 @@ from common.daemon import Daemon
 from common.logger import Log
 from common.clients import ClientMosquitto
 from common.exceptions import ReconnectFailure
-#test
+
 class Base(Daemon):
     transport_clients = {'Mosquitto': ClientMosquitto}
 

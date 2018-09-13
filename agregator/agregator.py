@@ -24,7 +24,7 @@ class AgregatorBase:
         self.is_agregator_running = Value('b', False)
         self.process_agregate = Process(target=self.agregate_process, args=(self.is_agregator_running,))
         self.process_agregate.start()
-        self.retry_timeout = 100
+        self.retry_timeout = 10
 
 
     def agregate_process(self, condition):
